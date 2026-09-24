@@ -1,6 +1,7 @@
 package edu.cit.jabines.supplier.job;
 
 import edu.cit.jabines.shared.event.SupplierOrderDeliveredEvent;
+import edu.cit.jabines.shared.event.LowStockDetectedEvent;
 import edu.cit.jabines.supplier.gateway.SupplierGateway;
 import edu.cit.jabines.supplier.model.SupplierOrder;
 import edu.cit.jabines.supplier.model.SupplierOrderStatus;
@@ -36,6 +37,31 @@ public class SupplierScheduledTasks {
         this.repository = repository;
         this.gateway = gateway;
         this.eventPublisher = eventPublisher;
+    }
+
+    @org.springframework.context.event.EventListener
+    @Transactional
+    public void onLowStockDetected(LowStockDetectedEvent event) {
+        log.info("Low stock event received: product={}, unitsNeeded={}",
+                event.getProductId(), event.getUnitsNeeded());
+
+        try {
+            SupplierGateway.SupplierResult result = gateway.placeOrder(
+                    event.getProductId(),
+                    event.getUnitsNeeded()
+            );
+
+            if (result.isSuccess()) {
+                log.info("Supplier reorder submitted: product={}, po={}",
+                        event.getProductId(), result.getPoNumber());
+            } else {
+                log.warn("Supplier reorder failed: product={}, error={}",
+                        event.getProductId(), result.getErrorMessage());
+            }
+        } catch (Exception e) {
+            log.error("Error processing low-stock event for product={}",
+                    event.getProductId(), e);
+        }
     }
 
     /**

@@ -14,5 +14,6 @@ public interface SupplierOrderRepository extends JpaRepository<SupplierOrder, Lo
     Optional<SupplierOrder> findByRequestId(String requestId);
     Optional<SupplierOrder> findByPoNumber(String poNumber);
     List<SupplierOrder> findByStatus(SupplierOrderStatus status);
+    List<SupplierOrder> findByProductIdAndStatusIn(String productId, List<SupplierOrderStatus> statuses);
     List<SupplierOrder> findByStatusNotIn(List<SupplierOrderStatus> statuses);
 }

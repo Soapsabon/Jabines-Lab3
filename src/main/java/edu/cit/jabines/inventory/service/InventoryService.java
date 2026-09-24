@@ -3,6 +3,7 @@ package edu.cit.jabines.inventory.service;
 import edu.cit.jabines.inventory.model.Product;
 import edu.cit.jabines.inventory.repository.ProductRepository;
 import edu.cit.jabines.shared.event.SupplierOrderDeliveredEvent;
+import edu.cit.jabines.shared.event.LowStockDetectedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -70,8 +71,10 @@ public class InventoryService {
         if (product.getStock() < product.getReorderLevel()) {
             log.info("Low stock detected for product {}: current={}, threshold={}", 
                 productId, product.getStock(), product.getReorderLevel());
-            // The reorder will be handled by the supplier module
-            // via the LowStockDetectedEvent or direct call to SupplierGateway
+            int unitsNeeded = product.getReorderLevel() - product.getStock();
+            eventPublisher.publishEvent(
+                    new LowStockDetectedEvent(productId, unitsNeeded)
+            );
         }
     }
 
