@@ -256,4 +256,3 @@ Lab 3 extends Lab 2 by adding supplier integration, but does not modify existing
 ## Contact
 
 Student: Snyd Jabines (22-4660-812)
-Course: IT317 Project Management
