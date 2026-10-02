@@ -1,0 +1,24 @@
+# Secrets - never commit (keep .env.example as the template)
+.env
+.env.*
+!.env.example
+
+# Build output
+target/
+*.class
+*.jar
+
+# Logs
+*.log
+logs/
+
+# Frontend
+node_modules/
+frontend/build/
+
+# IDEs / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
